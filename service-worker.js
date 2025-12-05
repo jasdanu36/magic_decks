@@ -1,4 +1,4 @@
-const STATIC_CACHE = "magic-decks-static-v2";
+const STATIC_CACHE = "magic-decks-static-v3";
 const DYNAMIC_CACHE = "magic-decks-dynamic-v1";
 
 const STATIC_ASSETS = [
