@@ -62,7 +62,7 @@ self.addEventListener("fetch", event => {
 
 async function cacheFirst(req) {
   const cache = await caches.open(DYNAMIC_CACHE);
-  const cached = await cache.match(req);w
+  const cached = await cache.match(req);
   if (cached) return cached;
 
   try {
