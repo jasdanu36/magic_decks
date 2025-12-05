@@ -318,12 +318,16 @@
 </head>
 <body>
   <header>
-    <h1>Magic Decks</h1>
+  <h1>Magic Decks</h1>
+  <div style="display:flex; flex-direction:column; gap:0.25rem; align-items:flex-end;">
+    <span id="netStatus" style="font-size:0.75rem; color:#9ca3af;">Checking network...</span>
     <div style="display:flex; gap:0.5rem; align-items:center;">
       <button class="btn" id="themeToggle">🌙 Dark</button>
       <button class="btn btn-accent" id="newDeckBtn">＋ New Deck</button>
     </div>
+   </div>
   </header>
+
 
   <div class="layout">
     <aside class="sidebar">
@@ -379,6 +383,21 @@
     const THEME_KEY = "magic_decks_theme_v1";
     let decks = {};
     let activeDeck = null;
+
+    function updateNetStatus() {
+  	const el = document.getElementById("netStatus");
+  	if (!el) return;
+  	if (navigator.onLine) {
+    	el.textContent = "Online – live card search available";
+    	el.style.color = "#22c55e"; // green-ish
+  	} else {
+    	el.textContent = "Offline – using cached cards only";
+    	el.style.color = "#f97316"; // orange
+      }
+    }
+
+window.addEventListener("online", updateNetStatus);
+window.addEventListener("offline", updateNetStatus);
 
     function loadData() {
       try {
@@ -553,7 +572,12 @@
         return;
       }
 
-      status.textContent = "Searching Scryfall...";
+      if (!navigator.onLine) {
+        status.textContent = "Offline: trying cached results (only previously searched cards may work).";
+	} else {
+  	status.textContent = "Searching Scryfall...";
+	}
+
       try {
         const url = `https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}`;
         const resp = await fetch(url);
@@ -660,6 +684,7 @@
     loadTheme();
     renderDeckList();
     setEditorModeNew();
+    updateNetStatus();
   </script>
 </body>
 </html>
