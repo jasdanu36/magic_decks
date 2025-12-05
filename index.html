@@ -400,6 +400,11 @@
     let decks = {};
     let activeDeck = null;
 
+    function getDeckCardCount(deck) {
+      if (!deck || !deck.cards) return 0;
+      return deck.cards.reduce((sum, c) => sum + (c.count || 1), 0);
+    }
+
     function loadData() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -433,13 +438,18 @@
       deckList.innerHTML = "";
       const names = Object.keys(decks).sort();
       names.forEach(name => {
+        const deck = decks[name] || { cards: [] };
         const div = document.createElement("div");
         div.className = "deck-item" + (name === activeDeck ? " active" : "");
+
         const span = document.createElement("span");
         span.textContent = name;
+
         const count = document.createElement("span");
         count.className = "deck-count";
-        count.textContent = (decks[name]?.cards?.length || 0) + " cards";
+        const totalCards = getDeckCardCount(deck);
+        count.textContent = `${totalCards} card${totalCards === 1 ? "" : "s"}`;
+
         div.appendChild(span);
         div.appendChild(count);
         div.onclick = () => {
@@ -452,7 +462,8 @@
     function updateDeckCountLabel() {
       const label = document.getElementById("deckCountLabel");
       const cards = getActiveDeckCards();
-      label.textContent = `${cards.length} card${cards.length === 1 ? "" : "s"}`;
+      const total = cards.reduce((sum, c) => sum + (c.count || 1), 0);
+      label.textContent = `${total} card${total === 1 ? "" : "s"}`;
     }
 
     function getActiveDeckCards() {
@@ -478,7 +489,8 @@
 
         const title = document.createElement("div");
         title.className = "card-row-title";
-        title.textContent = card.name;
+        const qty = card.count || 1;
+        title.textContent = `${card.name} x${qty}`;
 
         const sub = document.createElement("div");
         sub.className = "card-row-sub";
@@ -493,7 +505,7 @@
 
         const removeBtn = document.createElement("button");
         removeBtn.className = "btn btn-small btn-danger";
-        removeBtn.textContent = "Remove";
+        removeBtn.textContent = "Remove 1";
         removeBtn.onclick = () => {
           removeCardFromDeck(index);
         };
@@ -560,7 +572,16 @@
 
     function removeCardFromDeck(index) {
       if (!activeDeck || !decks[activeDeck]) return;
-      decks[activeDeck].cards.splice(index, 1);
+      const card = decks[activeDeck].cards[index];
+      if (!card) return;
+
+      const current = card.count || 1;
+      if (current > 1) {
+        card.count = current - 1;
+      } else {
+        decks[activeDeck].cards.splice(index, 1);
+      }
+
       saveData();
       renderDeckCards();
       renderDeckList();
@@ -573,7 +594,6 @@
       const resultsContainer = document.getElementById("searchResults");
       resultsContainer.innerHTML = "";
 
-      // Base query: if no user text, start empty and rely on type filter
       let fullQuery = queryInput || "";
 
       const addFilter = filter => {
@@ -703,6 +723,13 @@
           addBtn.className = "btn btn-small btn-accent";
           addBtn.textContent = "Add";
           addBtn.onclick = () => {
+            let qtyStr = prompt("How many copies to add?", "1");
+            if (qtyStr === null) return;
+
+            let qty = parseInt(qtyStr, 10);
+            if (isNaN(qty) || qty <= 0) qty = 1;
+            if (qty > 99) qty = 99;
+
             if (!activeDeck) {
               const tmpName =
                 document.getElementById("deckName").value.trim() || "New Deck";
@@ -712,7 +739,22 @@
               activeDeck = tmpName;
               document.getElementById("deckName").value = tmpName;
             }
-            decks[activeDeck].cards.push(card);
+
+            const deck = decks[activeDeck];
+            if (!deck.cards) deck.cards = [];
+
+            const existing = deck.cards.find(c => c.name === card.name);
+
+            if (existing) {
+              const current = existing.count || 1;
+              existing.count = current + qty;
+            } else {
+              deck.cards.push({
+                ...card,
+                count: qty
+              });
+            }
+
             saveData();
             renderDeckCards();
             renderDeckList();
