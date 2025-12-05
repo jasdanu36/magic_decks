@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <title>Magic Decks</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0f172a" />
-  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
   <style>
     :root {
       --bg: #0f172a;
@@ -17,7 +17,6 @@
       --danger: #ef4444;
       --border: #374151;
     }
-
     body.light {
       --bg: #f3f4f6;
       --bg-alt: #e5e7eb;
@@ -29,11 +28,7 @@
       --border: #d1d5db;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -71,19 +66,16 @@
       color: var(--text);
       border: 1px solid var(--border);
     }
-
     .btn-accent {
       background: var(--accent);
-      color: #ffffff;
+      color: white;
       border-color: transparent;
     }
-
     .btn-danger {
       background: var(--danger);
-      color: #ffffff;
+      color: white;
       border-color: transparent;
     }
-
     .btn:active {
       transform: scale(0.97);
     }
@@ -172,7 +164,7 @@
       border-radius: 0.9rem;
       padding: 0.75rem;
       border: 1px solid var(--border);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     }
 
     .card-header {
@@ -218,7 +210,7 @@
     input[type="text"]:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.5);
     }
 
     .columns {
@@ -272,10 +264,9 @@
       padding: 0.35rem;
       border-radius: 0.65rem;
       border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15,23,42,0.7);
       align-items: center;
     }
-
     body.light .card-row {
       background: #f9fafb;
     }
@@ -323,41 +314,14 @@
       margin-top: 0.25rem;
       min-height: 1.1em;
     }
-
-    .deck-wrapper {
-      margin-bottom: 0.25rem;
-    }
-
-    .deck-caret {
-      font-size: 0.8rem;
-      opacity: 0.8;
-      margin-right: 0.25rem;
-    }
-
-    .deck-collapsed-content {
-      margin-left: 1.4rem;
-      margin-top: 0.15rem;
-    }
-
-    .deck-collapsed-card {
-      font-size: 0.8rem;
-      color: var(--muted);
-      padding: 0.1rem 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   </style>
 </head>
 <body>
   <header>
     <h1>Magic Decks</h1>
-    <div style="display:flex; flex-direction:column; gap:0.25rem; align-items:flex-end;">
-      <span id="netStatus" style="font-size:0.75rem; color:#9ca3af;">Checking network...</span>
-      <div style="display:flex; gap:0.5rem; align-items:center;">
-        <button class="btn" id="themeToggle">🌙 Dark</button>
-        <button class="btn btn-accent" id="newDeckBtn">＋ New Deck</button>
-      </div>
+    <div style="display:flex; gap:0.5rem; align-items:center;">
+      <button class="btn" id="themeToggle">🌙 Dark</button>
+      <button class="btn btn-accent" id="newDeckBtn">＋ New Deck</button>
     </div>
   </header>
 
@@ -398,12 +362,27 @@
               <h3>Search Cards (Scryfall)</h3>
             </div>
             <div class="field">
-              <label for="searchQuery">Search</label>
-              <input type="text" id="searchQuery" placeholder="e.g. lightning bolt, goblin, elf" />
-            </div>
-            <button class="btn" id="searchBtn">🔍 Search</button>
-            <div class="status" id="searchStatus"></div>
-            <div class="list" id="searchResults"></div>
+  <label for="searchQuery">Search</label>
+  <input type="text" id="searchQuery" placeholder="e.g. lightning bolt, goblin, elf" />
+</div>
+
+<div class="field">
+  <label for="cardTypeFilter">Filter</label>
+  <select id="cardTypeFilter">
+    <option value="any">Any type</option>
+    <option value="mana">Mana / Lands</option>
+    <option value="planeswalker">Planeswalkers</option>
+    <option value="creature">Creatures</option>
+    <option value="instant_sorcery">Instants & Sorceries</option>
+    <option value="artifact">Artifacts</option>
+    <option value="enchantment">Enchantments</option>
+  </select>
+</div>
+
+<button class="btn" id="searchBtn">🔍 Search</button>
+<div class="status" id="searchStatus"></div>
+<div class="list" id="searchResults"></div>
+
           </div>
         </div>
       </section>
@@ -415,21 +394,6 @@
     const THEME_KEY = "magic_decks_theme_v1";
     let decks = {};
     let activeDeck = null;
-
-    function updateNetStatus() {
-      const el = document.getElementById("netStatus");
-      if (!el) return;
-      if (navigator.onLine) {
-        el.textContent = "Online – live card search available";
-        el.style.color = "#22c55e"; // green-ish
-      } else {
-        el.textContent = "Offline – using cached cards only";
-        el.style.color = "#f97316"; // orange
-      }
-    }
-
-    window.addEventListener("online", updateNetStatus);
-    window.addEventListener("offline", updateNetStatus);
 
     function loadData() {
       try {
@@ -448,79 +412,33 @@
     function loadTheme() {
       const theme = localStorage.getItem(THEME_KEY) || "dark";
       document.body.classList.toggle("light", theme === "light");
-      document.getElementById("themeToggle").textContent =
-        theme === "light" ? "☀️ Light" : "🌙 Dark";
+      document.getElementById("themeToggle").textContent = theme === "light" ? "☀️ Light" : "🌙 Dark";
     }
 
     function toggleTheme() {
       const isLight = document.body.classList.toggle("light");
       localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
-      document.getElementById("themeToggle").textContent =
-        isLight ? "☀️ Light" : "🌙 Dark";
+      document.getElementById("themeToggle").textContent = isLight ? "☀️ Light" : "🌙 Dark";
     }
 
     function renderDeckList() {
       const deckList = document.getElementById("deckList");
       deckList.innerHTML = "";
       const names = Object.keys(decks).sort();
-
       names.forEach(name => {
-        const deck = decks[name] || { cards: [] };
-        const cards = deck.cards || [];
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "deck-wrapper";
-
-        const header = document.createElement("div");
-        header.className = "deck-item" + (name === activeDeck ? " active" : "");
-
-        const left = document.createElement("div");
-        left.style.display = "flex";
-        left.style.alignItems = "center";
-        left.style.gap = "0.35rem";
-
-        const isExpanded = deck.expanded === true;
-
-        const caret = document.createElement("span");
-        caret.className = "deck-caret";
-        caret.textContent = isExpanded ? "▾" : "▸";
-
-        const titleSpan = document.createElement("span");
-        titleSpan.textContent = name;
-
-        left.appendChild(caret);
-        left.appendChild(titleSpan);
-
+        const div = document.createElement("div");
+        div.className = "deck-item" + (name === activeDeck ? " active" : "");
+        const span = document.createElement("span");
+        span.textContent = name;
         const count = document.createElement("span");
         count.className = "deck-count";
-        count.textContent = (cards.length || 0) + " cards";
-
-        header.appendChild(left);
-        header.appendChild(count);
-
-        header.onclick = () => {
-          const current = decks[name].expanded === true;
-          decks[name].expanded = !current;
-          activeDeck = name;
-          saveData();
+        count.textContent = (decks[name]?.cards?.length || 0) + " cards";
+        div.appendChild(span);
+        div.appendChild(count);
+        div.onclick = () => {
           openDeck(name);
         };
-
-        wrapper.appendChild(header);
-
-        const content = document.createElement("div");
-        content.className = "deck-collapsed-content";
-        content.style.display = isExpanded ? "block" : "none";
-
-        cards.forEach(card => {
-          const cRow = document.createElement("div");
-          cRow.className = "deck-collapsed-card";
-          cRow.textContent = card.name || "(unnamed card)";
-          content.appendChild(cRow);
-        });
-
-        wrapper.appendChild(content);
-        deckList.appendChild(wrapper);
+        deckList.appendChild(div);
       });
     }
 
@@ -539,7 +457,6 @@
       const container = document.getElementById("deckCards");
       container.innerHTML = "";
       const cards = getActiveDeckCards();
-
       cards.forEach((card, index) => {
         const row = document.createElement("div");
         row.className = "card-row";
@@ -555,7 +472,6 @@
         const title = document.createElement("div");
         title.className = "card-row-title";
         title.textContent = card.name;
-
         const sub = document.createElement("div");
         sub.className = "card-row-sub";
         sub.textContent = card.type_line || "";
@@ -643,157 +559,187 @@
     }
 
     async function searchCards() {
-      const query = document.getElementById("searchQuery").value.trim();
-      const status = document.getElementById("searchStatus");
-      const resultsContainer = document.getElementById("searchResults");
-      resultsContainer.innerHTML = "";
+  const queryInput = document.getElementById("searchQuery").value.trim();
+  const typeFilter = document.getElementById("cardTypeFilter").value;
+  const status = document.getElementById("searchStatus");
+  const resultsContainer = document.getElementById("searchResults");
+  resultsContainer.innerHTML = "";
 
-      if (!query) {
-        status.textContent = "Enter a search query.";
-        return;
-      }
+  // Base query: if no user text, start empty and rely on type filter
+  let fullQuery = queryInput || "";
 
-      if (!navigator.onLine) {
-        status.textContent =
-          "Offline: trying cached results (only previously searched cards may work).";
-      } else {
-        status.textContent = "Searching Scryfall...";
-      }
+  // Apply Scryfall type/category filters
+  // Docs: https://scryfall.com/docs/syntax but we’ll just inject the common ones
+  const addFilter = (filter) => {
+    fullQuery = fullQuery ? `${fullQuery} ${filter}` : filter;
+  };
 
-      try {
-        const url = `https://api.scryfall.com/cards/search?q=${encodeURIComponent(
-          query
-        )}`;
-        const resp = await fetch(url);
-        const data = await resp.json();
+  switch (typeFilter) {
+    case "mana":
+      // “Mana cards” → lands is a good simple category
+      addFilter("t:land");
+      break;
+    case "planeswalker":
+      addFilter("t:planeswalker");
+      break;
+    case "creature":
+      addFilter("t:creature");
+      break;
+    case "instant_sorcery":
+      // Instant or sorcery
+      addFilter("(t:instant OR t:sorcery)");
+      break;
+    case "artifact":
+      addFilter("t:artifact");
+      break;
+    case "enchantment":
+      addFilter("t:enchantment");
+      break;
+    case "any":
+    default:
+      // no extra filter
+      break;
+  }
 
-        if (!data.data) {
-          status.textContent = data.details || "No results.";
-          return;
-        }
+  if (!fullQuery) {
+    status.textContent = "Enter a search query or choose a filter.";
+    return;
+  }
 
-        const cards = data.data.slice(0, 20).map(c => {
-          let img = "";
+  if (!navigator.onLine) {
+    status.textContent =
+      "Offline: trying cached results (only previously searched cards may work).";
+  } else {
+    status.textContent = "Searching Scryfall...";
+  }
 
-          const pickImage = obj => {
-            if (!obj || !obj.image_uris) return "";
-            const iu = obj.image_uris;
-            return (
-              iu.normal ||
-              iu.large ||
-              iu.border_crop ||
-              iu.art_crop ||
-              iu.small ||
-              iu.png ||
-              ""
-            );
-          };
+  try {
+    const url = `https://api.scryfall.com/cards/search?q=${encodeURIComponent(fullQuery)}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
 
-          if (c.image_uris) {
-            img = pickImage(c);
-          } else if (Array.isArray(c.card_faces) && c.card_faces.length) {
-            for (const face of c.card_faces) {
-              img = pickImage(face);
-              if (img) break;
-            }
-          }
-
-          return {
-            name: c.name,
-            type_line: c.type_line || "",
-            image: img
-          };
-        });
-
-        if (!cards.length) {
-          status.textContent = "No results.";
-          return;
-        }
-
-        status.textContent = `${cards.length} result(s). Tap Add to include in your deck.`;
-
-        cards.forEach(card => {
-          const row = document.createElement("div");
-          row.className = "card-row";
-
-          const imgEl = document.createElement("img");
-          if (card.image) {
-            imgEl.src = card.image;
-          } else {
-            imgEl.style.background = "#4b5563";
-          }
-          imgEl.alt = card.name;
-          row.appendChild(imgEl);
-
-          const main = document.createElement("div");
-          main.className = "card-row-main";
-
-          const title = document.createElement("div");
-          title.className = "card-row-title";
-          title.textContent = card.name;
-
-          const sub = document.createElement("div");
-          sub.className = "card-row-sub";
-          sub.textContent = card.type_line;
-
-          main.appendChild(title);
-          main.appendChild(sub);
-          row.appendChild(main);
-
-          const actions = document.createElement("div");
-          actions.className = "row-actions";
-
-          const addBtn = document.createElement("button");
-          addBtn.className = "btn btn-small btn-accent";
-          addBtn.textContent = "Add";
-          addBtn.onclick = () => {
-            if (!activeDeck) {
-              const tmpName =
-                document.getElementById("deckName").value.trim() || "New Deck";
-              if (!decks[tmpName]) {
-                decks[tmpName] = { cards: [] };
-              }
-              activeDeck = tmpName;
-              document.getElementById("deckName").value = tmpName;
-            }
-            decks[activeDeck].cards.push(card);
-            saveData();
-            renderDeckCards();
-            renderDeckList();
-          };
-
-          actions.appendChild(addBtn);
-          row.appendChild(actions);
-          resultsContainer.appendChild(row);
-        });
-      } catch (err) {
-        console.error(err);
-        status.textContent = "Error contacting Scryfall.";
-      }
+    if (!data.data) {
+      status.textContent = data.details || "No results.";
+      return;
     }
+
+    const cards = data.data.slice(0, 20).map(c => {
+      let img = "";
+
+      const pickImage = obj => {
+        if (!obj || !obj.image_uris) return "";
+        const iu = obj.image_uris;
+        return (
+          iu.normal ||
+          iu.large ||
+          iu.border_crop ||
+          iu.art_crop ||
+          iu.small ||
+          iu.png ||
+          ""
+        );
+      };
+
+      if (c.image_uris) {
+        img = pickImage(c);
+      } else if (Array.isArray(c.card_faces) && c.card_faces.length) {
+        for (const face of c.card_faces) {
+          img = pickImage(face);
+          if (img) break;
+        }
+      }
+
+      return {
+        name: c.name,
+        type_line: c.type_line || "",
+        image: img
+      };
+    });
+
+    if (!cards.length) {
+      status.textContent = "No results.";
+      return;
+    }
+
+    status.textContent = `${cards.length} result(s). Tap Add to include in your deck.`;
+
+    cards.forEach(card => {
+      const row = document.createElement("div");
+      row.className = "card-row";
+
+      const imgEl = document.createElement("img");
+      if (card.image) {
+        imgEl.src = card.image;
+      } else {
+        imgEl.style.background = "#4b5563";
+      }
+      imgEl.alt = card.name;
+      row.appendChild(imgEl);
+
+      const main = document.createElement("div");
+      main.className = "card-row-main";
+
+      const title = document.createElement("div");
+      title.className = "card-row-title";
+      title.textContent = card.name;
+
+      const sub = document.createElement("div");
+      sub.className = "card-row-sub";
+      sub.textContent = card.type_line;
+
+      main.appendChild(title);
+      main.appendChild(sub);
+      row.appendChild(main);
+
+      const actions = document.createElement("div");
+      actions.className = "row-actions";
+
+      const addBtn = document.createElement("button");
+      addBtn.className = "btn btn-small btn-accent";
+      addBtn.textContent = "Add";
+      addBtn.onclick = () => {
+        if (!activeDeck) {
+          const tmpName =
+            document.getElementById("deckName").value.trim() || "New Deck";
+          if (!decks[tmpName]) {
+            decks[tmpName] = { cards: [] };
+          }
+          activeDeck = tmpName;
+          document.getElementById("deckName").value = tmpName;
+        }
+        decks[activeDeck].cards.push(card);
+        saveData();
+        renderDeckCards();
+        renderDeckList();
+      };
+
+      actions.appendChild(addBtn);
+      row.appendChild(actions);
+      resultsContainer.appendChild(row);
+    });
+  } catch (err) {
+    console.error(err);
+    status.textContent = "Error contacting Scryfall.";
+  }
+}
 
     document.getElementById("themeToggle").onclick = toggleTheme;
     document.getElementById("newDeckBtn").onclick = setEditorModeNew;
     document.getElementById("saveDeckBtn").onclick = saveDeck;
     document.getElementById("deleteDeckBtn").onclick = deleteDeck;
     document.getElementById("searchBtn").onclick = searchCards;
-    document
-      .getElementById("searchQuery")
-      .addEventListener("keydown", e => {
-        if (e.key === "Enter") searchCards();
-      });
+    document.getElementById("searchQuery").addEventListener("keydown", e => {
+      if (e.key === "Enter") searchCards();
+    });
 
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("service-worker.js")
-        .catch(console.error);
+      navigator.serviceWorker.register("service-worker.js").catch(console.error);
     }
 
     loadData();
     loadTheme();
     renderDeckList();
     setEditorModeNew();
-    updateNetStatus();
   </script>
 </body>
 </html>
